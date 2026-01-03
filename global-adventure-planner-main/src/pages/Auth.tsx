@@ -90,7 +90,7 @@ export default function Auth() {
         toast({
           variant: "destructive",
           title: "Authentication Failed",
-          description: "Could not sign in with Google.",
+          description: error.message || "Could not sign in with Google.",
         });
       }
     } finally {

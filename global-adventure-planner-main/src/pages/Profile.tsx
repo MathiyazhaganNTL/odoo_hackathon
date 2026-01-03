@@ -4,31 +4,68 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { 
-  User, 
-  Mail, 
-  Camera, 
-  Globe, 
-  Bell, 
-  Shield, 
+import {
+  User,
+  Mail,
+  Camera,
+  Globe,
+  Bell,
+  Shield,
   Trash2,
   Save,
   MapPin
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Switch } from "@/components/ui/switch";
+import { auth } from "@/lib/firebase";
+import { updateProfile, signOut } from "firebase/auth";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function Profile() {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      toast({
+        title: "Logged out",
+        description: "You have been successfully logged out.",
+      });
+      navigate("/");
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to log out.",
+      });
+    }
+  };
 
   const [formData, setFormData] = useState({
-    name: "John Doe",
-    email: "john@example.com",
-    bio: "Passionate traveler exploring the world one city at a time.",
-    location: "San Francisco, CA",
+    name: "",
+    email: "",
+    bio: "",
+    location: "",
     avatar: "",
   });
+
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      if (user) {
+        setFormData(prev => ({
+          ...prev,
+          name: user.displayName || "",
+          email: user.email || "",
+          // Don't overwrite other fields as they aren't in standard auth profile yet
+        }));
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
 
   const [preferences, setPreferences] = useState({
     emailNotifications: true,
@@ -39,13 +76,27 @@ export default function Profile() {
 
   const handleSave = async () => {
     setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
+    try {
+      if (auth.currentUser) {
+        await updateProfile(auth.currentUser, {
+          displayName: formData.name,
+          // photoURL: formData.avatar // If we were handling file uploads
+        });
+
+        toast({
+          title: "Profile updated",
+          description: "Your changes have been saved successfully.",
+        });
+      }
+    } catch (error) {
       toast({
-        title: "Profile updated",
-        description: "Your changes have been saved successfully.",
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to update profile.",
       });
-    }, 1000);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const savedDestinations = [
@@ -57,7 +108,11 @@ export default function Profile() {
 
   return (
     <div className="min-h-screen bg-background">
-      <Header isAuthenticated userName="John" onLogout={() => {}} />
+      <Header
+        isAuthenticated={!!auth.currentUser}
+        userName={auth.currentUser?.displayName || "User"}
+        onLogout={handleLogout}
+      />
 
       <main className="container mx-auto px-4 py-8 max-w-4xl">
         <h1 className="font-display text-3xl font-bold text-foreground mb-8">
@@ -166,7 +221,7 @@ export default function Profile() {
                   </div>
                   <Switch
                     checked={preferences.emailNotifications}
-                    onCheckedChange={(checked) => 
+                    onCheckedChange={(checked) =>
                       setPreferences({ ...preferences, emailNotifications: checked })
                     }
                   />
@@ -181,7 +236,7 @@ export default function Profile() {
                   </div>
                   <Switch
                     checked={preferences.tripReminders}
-                    onCheckedChange={(checked) => 
+                    onCheckedChange={(checked) =>
                       setPreferences({ ...preferences, tripReminders: checked })
                     }
                   />
@@ -196,7 +251,7 @@ export default function Profile() {
                   </div>
                   <Switch
                     checked={preferences.publicProfile}
-                    onCheckedChange={(checked) => 
+                    onCheckedChange={(checked) =>
                       setPreferences({ ...preferences, publicProfile: checked })
                     }
                   />
@@ -211,7 +266,7 @@ export default function Profile() {
                   </div>
                   <Switch
                     checked={preferences.shareTrips}
-                    onCheckedChange={(checked) => 
+                    onCheckedChange={(checked) =>
                       setPreferences({ ...preferences, shareTrips: checked })
                     }
                   />
@@ -235,9 +290,9 @@ export default function Profile() {
             </div>
 
             {/* Save Button */}
-            <Button 
-              variant="ocean" 
-              size="lg" 
+            <Button
+              variant="ocean"
+              size="lg"
               className="w-full gap-2"
               onClick={handleSave}
               disabled={isLoading}
@@ -263,7 +318,7 @@ export default function Profile() {
               </h3>
               <div className="space-y-2">
                 {savedDestinations.map((dest) => (
-                  <div 
+                  <div
                     key={dest.name}
                     className="flex items-center gap-3 p-2 rounded-lg hover:bg-secondary transition-colors"
                   >

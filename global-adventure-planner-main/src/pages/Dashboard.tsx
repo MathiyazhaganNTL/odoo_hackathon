@@ -2,15 +2,20 @@ import { Link } from "react-router-dom";
 import { Header } from "@/components/layout/Header";
 import { TripCard } from "@/components/trips/TripCard";
 import { Button } from "@/components/ui/button";
-import { 
-  Plus, 
-  Compass, 
-  TrendingUp, 
+import {
+  Plus,
+  Compass,
+  TrendingUp,
   Calendar,
   DollarSign,
   MapPin,
   ArrowRight
 } from "lucide-react";
+import { auth } from "@/lib/firebase";
+import { signOut } from "firebase/auth";
+import { useState, useEffect } from "react";
+import { useToast } from "@/hooks/use-toast";
+import { useNavigate } from "react-router-dom";
 
 // Mock data - In production, this would come from Supabase
 const mockTrips = [
@@ -61,16 +66,51 @@ const recommendedDestinations = [
 ];
 
 export default function Dashboard() {
+  const { toast } = useToast();
+  const navigate = useNavigate();
+  const [userName, setUserName] = useState("Traveler");
+
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      if (user?.displayName) {
+        setUserName(user.displayName);
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      toast({
+        title: "Logged out",
+        description: "You have been successfully logged out.",
+      });
+      navigate("/");
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to log out.",
+      });
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background">
-      <Header isAuthenticated userName="John" onLogout={() => {}} />
+      <Header
+        isAuthenticated={!!auth.currentUser}
+        userName={userName}
+        onLogout={handleLogout}
+      />
 
       <main className="container mx-auto px-4 py-8">
         {/* Welcome Section */}
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 mb-10">
           <div>
             <h1 className="font-display text-3xl md:text-4xl font-bold text-foreground mb-2">
-              Welcome back, <span className="text-ocean">John</span>! 👋
+              Welcome back, <span className="text-ocean">{userName}</span>! 👋
             </h1>
             <p className="text-muted-foreground text-lg">
               Ready to plan your next adventure?
@@ -87,7 +127,7 @@ export default function Dashboard() {
         {/* Quick Stats */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
           {quickStats.map((stat, index) => (
-            <div 
+            <div
               key={stat.label}
               className="card-elevated p-5 flex items-center gap-4 animate-slide-up"
               style={{ animationDelay: `${index * 0.05}s` }}
@@ -120,7 +160,7 @@ export default function Dashboard() {
 
             <div className="grid sm:grid-cols-2 gap-6">
               {mockTrips.slice(0, 4).map((trip, index) => (
-                <div 
+                <div
                   key={trip.id}
                   className="animate-slide-up"
                   style={{ animationDelay: `${index * 0.1}s` }}
@@ -163,7 +203,7 @@ export default function Dashboard() {
               </div>
               <div className="space-y-3">
                 {recommendedDestinations.map((dest) => (
-                  <div 
+                  <div
                     key={dest.name}
                     className="flex items-center gap-3 p-3 rounded-xl bg-secondary/50 hover:bg-secondary transition-colors cursor-pointer"
                   >
