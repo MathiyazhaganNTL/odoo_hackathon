@@ -71,6 +71,8 @@ export default function Auth() {
         errorMessage = "This email is already registered.";
       } else if (error.code === 'auth/invalid-credential') {
         errorMessage = "Invalid email or password.";
+      } else if (error.code === 'auth/unauthorized-domain') {
+        errorMessage = `Domain not authorized. Add "${window.location.hostname}" to Firebase Console > Auth > Settings.`;
       } else {
         // Show the actual error for debugging
         errorMessage = `Error: ${error.message} (${error.code})`;
@@ -101,10 +103,15 @@ export default function Auth() {
     } catch (error: any) {
       console.error(error);
       if (error.code !== 'auth/popup-closed-by-user') {
+        let msg = `Error: ${error.message} (${error.code})`;
+        if (error.code === 'auth/unauthorized-domain') {
+          msg = `Domain not authorized. Add "${window.location.hostname}" to Firebase Console > Auth > Settings.`;
+        }
+
         toast({
           variant: "destructive",
           title: "Authentication Failed",
-          description: `Error: ${error.message} (${error.code})`,
+          description: msg,
         });
       }
     } finally {
