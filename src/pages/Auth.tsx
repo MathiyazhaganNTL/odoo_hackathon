@@ -71,8 +71,9 @@ export default function Auth() {
         errorMessage = "This email is already registered.";
       } else if (error.code === 'auth/invalid-credential') {
         errorMessage = "Invalid email or password.";
-      } else if (error.code === 'auth/weak-password') {
-        errorMessage = "Password should be at least 6 characters.";
+      } else {
+        // Show the actual error for debugging
+        errorMessage = `Error: ${error.message} (${error.code})`;
       }
 
       toast({
@@ -103,7 +104,7 @@ export default function Auth() {
         toast({
           variant: "destructive",
           title: "Authentication Failed",
-          description: error.message || "Could not sign in with Google.",
+          description: `Error: ${error.message} (${error.code})`,
         });
       }
     } finally {
