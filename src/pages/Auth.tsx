@@ -30,7 +30,7 @@ export default function Auth() {
       toast({
         variant: "destructive",
         title: "Configuration Error",
-        description: "Firebase is not properly initialized. Please check your .env configuration.",
+        description: "Firebase is not initialized. Please checking your .env file settings.",
       });
       setIsLoading(false);
       return;
@@ -71,8 +71,11 @@ export default function Auth() {
         errorMessage = "This email is already registered.";
       } else if (error.code === 'auth/invalid-credential') {
         errorMessage = "Invalid email or password.";
-      } else if (error.code === 'auth/weak-password') {
-        errorMessage = "Password should be at least 6 characters.";
+      } else if (error.code === 'auth/unauthorized-domain') {
+        errorMessage = `Domain not authorized. Add "${window.location.hostname}" to Firebase Console > Auth > Settings.`;
+      } else {
+        // Show the actual error for debugging
+        errorMessage = `Error: ${error.message} (${error.code})`;
       }
 
       toast({
@@ -89,12 +92,7 @@ export default function Auth() {
     try {
       setIsLoading(true);
       if (!auth) {
-        toast({
-          variant: "destructive",
-          title: "Configuration Error",
-          description: "Firebase is not properly initialized. Please check your .env configuration.",
-        });
-        return;
+        throw new Error("Firebase not initialized");
       }
       await signInWithPopup(auth, googleProvider);
       toast({
@@ -105,10 +103,15 @@ export default function Auth() {
     } catch (error: any) {
       console.error(error);
       if (error.code !== 'auth/popup-closed-by-user') {
+        let msg = `Error: ${error.message} (${error.code})`;
+        if (error.code === 'auth/unauthorized-domain') {
+          msg = `Domain not authorized. Add "${window.location.hostname}" to Firebase Console > Auth > Settings.`;
+        }
+
         toast({
           variant: "destructive",
           title: "Authentication Failed",
-          description: error.message || "Could not sign in with Google.",
+          description: msg,
         });
       }
     } finally {
