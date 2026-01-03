@@ -19,13 +19,29 @@ let auth;
 let googleProvider;
 let analytics;
 
-try {
-  app = initializeApp(firebaseConfig);
-  auth = getAuth(app);
-  googleProvider = new GoogleAuthProvider();
-  analytics = getAnalytics(app);
-} catch (error) {
-  console.error("Firebase initialization error. Check your environment variables.", error);
+const requiredKeys = [
+  "apiKey",
+  "authDomain",
+  "projectId",
+  "storageBucket",
+  "messagingSenderId",
+  "appId"
+] as const;
+
+const missingKeys = requiredKeys.filter(key => !firebaseConfig[key]);
+
+if (missingKeys.length > 0) {
+  console.error("Missing Firebase configuration keys:", missingKeys.join(", "));
+  console.error("Please add them to your .env file.");
+} else {
+  try {
+    app = initializeApp(firebaseConfig);
+    auth = getAuth(app);
+    googleProvider = new GoogleAuthProvider();
+    analytics = getAnalytics(app);
+  } catch (error) {
+    console.error("Firebase initialization error. Check your environment variables.", error);
+  }
 }
 
 export { auth, googleProvider, analytics };

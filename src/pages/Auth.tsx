@@ -26,6 +26,16 @@ export default function Auth() {
     e.preventDefault();
     setIsLoading(true);
 
+    if (!auth) {
+      toast({
+        variant: "destructive",
+        title: "Configuration Error",
+        description: "Firebase is not properly initialized. Please check your .env configuration.",
+      });
+      setIsLoading(false);
+      return;
+    }
+
     try {
       if (isSignUp) {
         // Create new user
@@ -78,6 +88,14 @@ export default function Auth() {
   const handleGoogleSignIn = async () => {
     try {
       setIsLoading(true);
+      if (!auth) {
+        toast({
+          variant: "destructive",
+          title: "Configuration Error",
+          description: "Firebase is not properly initialized. Please check your .env configuration.",
+        });
+        return;
+      }
       await signInWithPopup(auth, googleProvider);
       toast({
         title: "Welcome back!",
