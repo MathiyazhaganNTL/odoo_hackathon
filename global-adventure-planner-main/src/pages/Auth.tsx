@@ -5,6 +5,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Compass, Mail, Lock, User, ArrowRight, Eye, EyeOff } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { auth, googleProvider } from "@/lib/firebase";
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile, signInWithPopup } from "firebase/auth";
 
 export default function Auth() {
   const [searchParams] = useSearchParams();
@@ -24,17 +26,53 @@ export default function Auth() {
     e.preventDefault();
     setIsLoading(true);
 
-    // Simulate auth - In production, this would connect to Supabase
-    setTimeout(() => {
-      setIsLoading(false);
+    try {
+      if (isSignUp) {
+        // Create new user
+        const userCredential = await createUserWithEmailAndPassword(auth, formData.email, formData.password);
+
+        // Update profile with name
+        if (auth.currentUser) {
+          await updateProfile(auth.currentUser, {
+            displayName: formData.name
+          });
+        }
+
+        toast({
+          title: "Account created!",
+          description: `Welcome, ${formData.name}! Your account has been created successfully.`,
+        });
+      } else {
+        // Sign in existing user
+        await signInWithEmailAndPassword(auth, formData.email, formData.password);
+
+        toast({
+          title: "Welcome back!",
+          description: "You've been logged in successfully.",
+        });
+      }
+      navigate("/"); // Redirect to home/dashboard after successful auth
+    } catch (error: any) {
+      console.error(error);
+      let errorMessage = "An error occurred during authentication.";
+
+      // Improve error messages
+      if (error.code === 'auth/email-already-in-use') {
+        errorMessage = "This email is already registered.";
+      } else if (error.code === 'auth/invalid-credential') {
+        errorMessage = "Invalid email or password.";
+      } else if (error.code === 'auth/weak-password') {
+        errorMessage = "Password should be at least 6 characters.";
+      }
+
       toast({
-        title: isSignUp ? "Account created!" : "Welcome back!",
-        description: isSignUp 
-          ? "Your account has been created successfully." 
-          : "You've been logged in successfully.",
+        variant: "destructive",
+        title: "Authentication Failed",
+        description: errorMessage,
       });
-      navigate("/dashboard");
-    }, 1000);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -58,8 +96,8 @@ export default function Auth() {
               {isSignUp ? "Create your account" : "Welcome back"}
             </h1>
             <p className="text-muted-foreground">
-              {isSignUp 
-                ? "Start planning your dream adventures today" 
+              {isSignUp
+                ? "Start planning your dream adventures today"
                 : "Sign in to continue your travel planning"
               }
             </p>
@@ -167,7 +205,7 @@ export default function Auth() {
       {/* Right Side - Hero Image */}
       <div className="hidden lg:flex flex-1 relative bg-gradient-hero overflow-hidden">
         <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0zNiAxOGMxLjY1NyAwIDMgMS4zNDMgMyAzcy0xLjM0MyAzLTMgMy0zLTEuMzQzLTMtMyAxLjM0My0zIDMtM3oiIGZpbGw9InJnYmEoMjU1LDI1NSwyNTUsMC4xKSIvPjwvZz48L3N2Zz4=')] opacity-30" />
-        
+
         <div className="relative z-10 flex flex-col items-center justify-center p-12 text-center">
           <div className="w-24 h-24 rounded-2xl bg-white/10 backdrop-blur-sm flex items-center justify-center mb-8 animate-float">
             <Compass className="w-12 h-12 text-white" />
@@ -176,7 +214,7 @@ export default function Auth() {
             Your Next Adventure Awaits
           </h2>
           <p className="text-lg text-white/80 max-w-md">
-            Plan, organize, and share your travel experiences with GlobalTrotters. 
+            Plan, organize, and share your travel experiences with GlobalTrotters.
             Create detailed itineraries, track budgets, and explore the world.
           </p>
 
