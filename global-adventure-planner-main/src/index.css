@@ -1,0 +1,316 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* GlobalTrotters Design System
+   Adventure-inspired travel app with ocean teal, warm coral, and cream tones
+   Typography: Clean, modern with bold headings for wanderlust vibes
+*/
+
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap');
+
+@layer base {
+  :root {
+    /* Core palette - Ocean & Adventure */
+    --background: 40 33% 98%;
+    --foreground: 200 25% 15%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 200 25% 15%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 200 25% 15%;
+
+    /* Primary - Deep Ocean Teal */
+    --primary: 180 50% 30%;
+    --primary-foreground: 40 33% 98%;
+
+    /* Secondary - Soft Sage */
+    --secondary: 165 25% 90%;
+    --secondary-foreground: 180 50% 25%;
+
+    /* Muted - Warm Neutrals */
+    --muted: 40 20% 94%;
+    --muted-foreground: 200 10% 45%;
+
+    /* Accent - Warm Coral */
+    --accent: 15 85% 60%;
+    --accent-foreground: 0 0% 100%;
+
+    /* Destructive */
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+
+    /* Borders & Inputs */
+    --border: 200 15% 88%;
+    --input: 200 15% 88%;
+    --ring: 180 50% 30%;
+
+    --radius: 0.75rem;
+
+    /* Extended Palette */
+    --ocean: 180 50% 30%;
+    --ocean-light: 180 45% 45%;
+    --ocean-dark: 180 55% 20%;
+    --coral: 15 85% 60%;
+    --coral-light: 15 90% 72%;
+    --coral-dark: 15 80% 48%;
+    --sand: 40 30% 92%;
+    --sand-dark: 40 25% 82%;
+    --sunset: 25 95% 55%;
+    --forest: 150 40% 35%;
+    --sky: 200 80% 55%;
+
+    /* Gradients */
+    --gradient-ocean: linear-gradient(135deg, hsl(180 50% 30%) 0%, hsl(200 60% 40%) 100%);
+    --gradient-sunset: linear-gradient(135deg, hsl(15 85% 60%) 0%, hsl(35 95% 55%) 100%);
+    --gradient-adventure: linear-gradient(135deg, hsl(180 50% 30%) 0%, hsl(165 45% 40%) 50%, hsl(150 40% 35%) 100%);
+    --gradient-warm: linear-gradient(135deg, hsl(40 33% 98%) 0%, hsl(40 30% 92%) 100%);
+    --gradient-hero: linear-gradient(180deg, hsl(180 50% 25%) 0%, hsl(200 55% 35%) 100%);
+
+    /* Shadows */
+    --shadow-sm: 0 1px 2px 0 hsl(200 25% 15% / 0.05);
+    --shadow-md: 0 4px 6px -1px hsl(200 25% 15% / 0.08), 0 2px 4px -2px hsl(200 25% 15% / 0.05);
+    --shadow-lg: 0 10px 15px -3px hsl(200 25% 15% / 0.1), 0 4px 6px -4px hsl(200 25% 15% / 0.05);
+    --shadow-xl: 0 20px 25px -5px hsl(200 25% 15% / 0.1), 0 8px 10px -6px hsl(200 25% 15% / 0.05);
+    --shadow-glow: 0 0 30px hsl(180 50% 30% / 0.2);
+    --shadow-coral: 0 4px 14px hsl(15 85% 60% / 0.3);
+
+    /* Sidebar */
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 200 25% 15%;
+    --sidebar-primary: 180 50% 30%;
+    --sidebar-primary-foreground: 40 33% 98%;
+    --sidebar-accent: 165 25% 90%;
+    --sidebar-accent-foreground: 180 50% 25%;
+    --sidebar-border: 200 15% 88%;
+    --sidebar-ring: 180 50% 30%;
+  }
+
+  .dark {
+    --background: 200 25% 10%;
+    --foreground: 40 20% 95%;
+
+    --card: 200 25% 13%;
+    --card-foreground: 40 20% 95%;
+
+    --popover: 200 25% 13%;
+    --popover-foreground: 40 20% 95%;
+
+    --primary: 180 45% 45%;
+    --primary-foreground: 200 25% 10%;
+
+    --secondary: 200 20% 18%;
+    --secondary-foreground: 40 20% 90%;
+
+    --muted: 200 20% 18%;
+    --muted-foreground: 200 15% 55%;
+
+    --accent: 15 80% 55%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 65% 45%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 200 20% 20%;
+    --input: 200 20% 20%;
+    --ring: 180 45% 45%;
+
+    --ocean: 180 45% 45%;
+    --ocean-light: 180 40% 55%;
+    --ocean-dark: 180 50% 35%;
+    --coral: 15 80% 55%;
+    --coral-light: 15 85% 65%;
+    --coral-dark: 15 75% 45%;
+    --sand: 40 20% 20%;
+    --sand-dark: 40 15% 15%;
+
+    --sidebar-background: 200 25% 10%;
+    --sidebar-foreground: 40 20% 95%;
+    --sidebar-primary: 180 45% 45%;
+    --sidebar-primary-foreground: 200 25% 10%;
+    --sidebar-accent: 200 20% 18%;
+    --sidebar-accent-foreground: 40 20% 90%;
+    --sidebar-border: 200 20% 20%;
+    --sidebar-ring: 180 45% 45%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display font-bold tracking-tight;
+  }
+}
+
+@layer components {
+  /* Card Variants */
+  .card-elevated {
+    @apply bg-card rounded-xl shadow-lg border border-border/50 transition-all duration-300;
+  }
+
+  .card-elevated:hover {
+    @apply shadow-xl -translate-y-1;
+  }
+
+  .card-trip {
+    @apply bg-card rounded-2xl shadow-md border border-border/30 overflow-hidden transition-all duration-300;
+  }
+
+  .card-trip:hover {
+    @apply shadow-xl -translate-y-2;
+  }
+
+  /* Glass Effects */
+  .glass {
+    @apply bg-card/80 backdrop-blur-md border border-border/50;
+  }
+
+  .glass-dark {
+    @apply bg-foreground/10 backdrop-blur-md border border-foreground/10;
+  }
+
+  /* Gradient Backgrounds */
+  .bg-gradient-ocean {
+    background: var(--gradient-ocean);
+  }
+
+  .bg-gradient-sunset {
+    background: var(--gradient-sunset);
+  }
+
+  .bg-gradient-adventure {
+    background: var(--gradient-adventure);
+  }
+
+  .bg-gradient-hero {
+    background: var(--gradient-hero);
+  }
+
+  /* Text Gradients */
+  .text-gradient-ocean {
+    @apply bg-clip-text text-transparent;
+    background: var(--gradient-ocean);
+  }
+
+  .text-gradient-sunset {
+    @apply bg-clip-text text-transparent;
+    background: var(--gradient-sunset);
+  }
+
+  /* Button Glow Effects */
+  .btn-glow {
+    @apply relative overflow-hidden;
+  }
+
+  .btn-glow::before {
+    content: '';
+    @apply absolute inset-0 opacity-0 transition-opacity duration-300;
+    background: radial-gradient(circle at center, hsl(var(--accent) / 0.3) 0%, transparent 70%);
+  }
+
+  .btn-glow:hover::before {
+    @apply opacity-100;
+  }
+
+  /* Animations */
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  .animate-pulse-soft {
+    animation: pulse-soft 3s ease-in-out infinite;
+  }
+
+  .animate-slide-up {
+    animation: slide-up 0.5s ease-out;
+  }
+
+  .animate-fade-in {
+    animation: fade-in 0.5s ease-out;
+  }
+
+  .animate-scale-in {
+    animation: scale-in 0.3s ease-out;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes pulse-soft {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-muted rounded-full;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-border rounded-full transition-colors;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-muted-foreground/30;
+}
