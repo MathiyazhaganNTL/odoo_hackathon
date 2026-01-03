@@ -14,7 +14,18 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-const app = initializeApp(firebaseConfig);
-export const auth = getAuth(app);
-export const googleProvider = new GoogleAuthProvider();
-export const analytics = getAnalytics(app);
+let app;
+let auth;
+let googleProvider;
+let analytics;
+
+try {
+  app = initializeApp(firebaseConfig);
+  auth = getAuth(app);
+  googleProvider = new GoogleAuthProvider();
+  analytics = getAnalytics(app);
+} catch (error) {
+  console.error("Firebase initialization error. Check your environment variables.", error);
+}
+
+export { auth, googleProvider, analytics };
