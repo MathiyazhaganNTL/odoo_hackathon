@@ -1,10 +1,10 @@
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { 
-  Compass, 
-  Map, 
-  User, 
-  Menu, 
+import {
+  Compass,
+  Map,
+  User,
+  Menu,
   X,
   Plus,
   LogOut
@@ -35,9 +35,11 @@ export function Header({ isAuthenticated = false, userName, onLogout }: HeaderPr
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2 group">
-            <div className="w-10 h-10 rounded-xl bg-gradient-ocean flex items-center justify-center shadow-glow group-hover:scale-105 transition-transform">
-              <Compass className="w-5 h-5 text-primary-foreground" />
-            </div>
+            <img
+              src="/logo.png"
+              alt="GlobalTrotters Logo"
+              className="w-10 h-10 object-contain group-hover:scale-105 transition-transform"
+            />
             <span className="font-display text-xl font-bold text-foreground">
               Global<span className="text-ocean">Trotters</span>
             </span>
@@ -83,9 +85,9 @@ export function Header({ isAuthenticated = false, userName, onLogout }: HeaderPr
                     </div>
                   </Button>
                 </Link>
-                <Button 
-                  variant="ghost" 
-                  size="icon-sm" 
+                <Button
+                  variant="ghost"
+                  size="icon-sm"
                   onClick={onLogout}
                   className="text-muted-foreground hover:text-foreground"
                 >
@@ -124,8 +126,8 @@ export function Header({ isAuthenticated = false, userName, onLogout }: HeaderPr
           <nav className="md:hidden py-4 border-t border-border/50 animate-slide-up">
             <div className="flex flex-col gap-2">
               {navLinks.map((link) => (
-                <Link 
-                  key={link.href} 
+                <Link
+                  key={link.href}
                   to={link.href}
                   onClick={() => setMobileMenuOpen(false)}
                 >

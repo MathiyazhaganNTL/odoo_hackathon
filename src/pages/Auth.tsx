@@ -105,9 +105,11 @@ export default function Auth() {
         <div className="w-full max-w-md space-y-8 animate-slide-up">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2 group">
-            <div className="w-12 h-12 rounded-xl bg-gradient-ocean flex items-center justify-center shadow-glow group-hover:scale-105 transition-transform">
-              <Compass className="w-6 h-6 text-primary-foreground" />
-            </div>
+            <img
+              src="/logo.png"
+              alt="GlobalTrotters Logo"
+              className="w-16 h-16 object-contain group-hover:scale-105 transition-transform"
+            />
             <span className="font-display text-2xl font-bold text-foreground">
               Global<span className="text-ocean">Trotters</span>
             </span>
@@ -268,9 +270,11 @@ export default function Auth() {
         <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0zNiAxOGMxLjY1NyAwIDMgMS4zNDMgMyAzcy0xLjM0MyAzLTMgMy0zLTEuMzQzLTMtMyAxLjM0My0zIDMtM3oiIGZpbGw9InJnYmEoMjU1LDI1NSwyNTUsMC4xKSIvPjwvZz48L3N2Zz4=')] opacity-30" />
 
         <div className="relative z-10 flex flex-col items-center justify-center p-12 text-center">
-          <div className="w-24 h-24 rounded-2xl bg-white/10 backdrop-blur-sm flex items-center justify-center mb-8 animate-float">
-            <Compass className="w-12 h-12 text-white" />
-          </div>
+          <img
+            src="/logo.png"
+            alt="GlobalTrotters Logo"
+            className="w-32 h-32 object-contain mb-8 animate-float"
+          />
           <h2 className="font-display text-4xl font-bold text-white mb-4">
             Your Next Adventure Awaits
           </h2>
