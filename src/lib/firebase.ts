@@ -21,11 +21,23 @@ let analytics;
 
 try {
   app = initializeApp(firebaseConfig);
-  auth = getAuth(app);
-  googleProvider = new GoogleAuthProvider();
-  analytics = getAnalytics(app);
 } catch (error) {
-  console.error("Firebase initialization error. Check your environment variables.", error);
+  console.error("Error initializing Firebase App:", error);
+}
+
+if (app) {
+  try {
+    auth = getAuth(app);
+    googleProvider = new GoogleAuthProvider();
+  } catch (error) {
+    console.error("Error initializing Firebase Auth:", error);
+  }
+
+  try {
+    analytics = getAnalytics(app);
+  } catch (error) {
+    console.warn("Analytics not initialized (this is expected in some environments):", error);
+  }
 }
 
 export { auth, googleProvider, analytics };
