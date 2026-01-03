@@ -1,6 +1,7 @@
 import { initializeApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider } from "firebase/auth";
 import { getAnalytics } from "firebase/analytics";
+import { getStorage } from "firebase/storage";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -16,6 +17,7 @@ const firebaseConfig = {
 // Initialize Firebase
 let app;
 let auth;
+let storage;
 let googleProvider;
 let analytics;
 
@@ -37,6 +39,7 @@ if (missingKeys.length > 0) {
   try {
     app = initializeApp(firebaseConfig);
     auth = getAuth(app);
+    storage = getStorage(app);
     googleProvider = new GoogleAuthProvider();
     analytics = getAnalytics(app);
   } catch (error) {
@@ -44,4 +47,4 @@ if (missingKeys.length > 0) {
   }
 }
 
-export { auth, googleProvider, analytics };
+export { auth, storage, googleProvider, analytics };

@@ -17,8 +17,9 @@ import {
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Switch } from "@/components/ui/switch";
-import { auth } from "@/lib/firebase";
+import { auth, storage } from "@/lib/firebase";
 import { updateProfile, signOut } from "firebase/auth";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -59,7 +60,7 @@ export default function Profile() {
           ...prev,
           name: user.displayName || "",
           email: user.email || "",
-          // Don't overwrite other fields as they aren't in standard auth profile yet
+          avatar: user.photoURL || "",
         }));
       }
     });
@@ -99,6 +100,53 @@ export default function Profile() {
     }
   };
 
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+
+      // Validate file size (5MB max)
+      if (file.size > 5 * 1024 * 1024) {
+        toast({
+          variant: "destructive",
+          title: "File too large",
+          description: "Image size must be less than 5MB.",
+        });
+        return;
+      }
+
+      setIsLoading(true);
+      try {
+        if (!auth.currentUser) throw new Error("User not authenticated");
+        if (!storage) throw new Error("Storage not initialized");
+
+        const storageRef = ref(storage, `profile_pictures/${auth.currentUser.uid}`);
+        await uploadBytes(storageRef, file);
+        const downloadURL = await getDownloadURL(storageRef);
+
+        // Update profile immediately with new photo
+        await updateProfile(auth.currentUser, {
+          photoURL: downloadURL
+        });
+
+        setFormData(prev => ({ ...prev, avatar: downloadURL }));
+
+        toast({
+          title: "Photo updated",
+          description: "Your profile photo has been updated successfully.",
+        });
+      } catch (error) {
+        console.error("Error uploading photo:", error);
+        toast({
+          variant: "destructive",
+          title: "Upload failed",
+          description: "Failed to upload profile photo. Please try again.",
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    }
+  };
+
   const savedDestinations = [
     { name: "Tokyo", country: "Japan" },
     { name: "Paris", country: "France" },
@@ -131,15 +179,37 @@ export default function Profile() {
 
               {/* Avatar */}
               <div className="flex items-center gap-4">
-                <div className="w-20 h-20 rounded-full bg-gradient-ocean flex items-center justify-center">
-                  <span className="text-2xl font-bold text-primary-foreground">
-                    {formData.name.charAt(0)}
-                  </span>
+                <div className="w-20 h-20 rounded-full bg-gradient-ocean flex items-center justify-center overflow-hidden">
+                  {formData.avatar ? (
+                    <img
+                      src={formData.avatar}
+                      alt="Profile"
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <span className="text-2xl font-bold text-primary-foreground">
+                      {formData.name.charAt(0)}
+                    </span>
+                  )}
                 </div>
                 <div>
-                  <Button variant="secondary" size="sm" className="gap-2">
+                  <input
+                    type="file"
+                    id="photo-upload"
+                    className="hidden"
+                    accept="image/png, image/jpeg, image/jpg"
+                    onChange={handleFileChange}
+                    disabled={isLoading}
+                  />
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    className="gap-2"
+                    onClick={() => document.getElementById('photo-upload')?.click()}
+                    disabled={isLoading}
+                  >
                     <Camera className="w-4 h-4" />
-                    Change Photo
+                    {isLoading ? "Uploading..." : "Change Photo"}
                   </Button>
                   <p className="text-sm text-muted-foreground mt-1">
                     JPG, PNG up to 5MB
