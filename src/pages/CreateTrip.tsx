@@ -5,7 +5,14 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Calendar, Image, ArrowLeft, ArrowRight, Sparkles } from "lucide-react";
+import { Calendar, ArrowLeft, ArrowRight, Sparkles, Banknote } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 
 export default function CreateTrip() {
@@ -18,7 +25,7 @@ export default function CreateTrip() {
     description: "",
     startDate: "",
     endDate: "",
-    coverImage: "",
+    budget: "",
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -38,7 +45,7 @@ export default function CreateTrip() {
 
   return (
     <div className="min-h-screen bg-background">
-      <Header isAuthenticated userName="John" onLogout={() => {}} />
+      <Header isAuthenticated userName="John" onLogout={() => { }} />
 
       <main className="container mx-auto px-4 py-8 max-w-2xl">
         {/* Back Button */}
@@ -96,6 +103,29 @@ export default function CreateTrip() {
               />
             </div>
 
+            {/* Budget */}
+            <div className="space-y-2">
+              <Label htmlFor="budget" className="text-foreground font-medium">
+                Budget *
+              </Label>
+              <div className="relative">
+                <Banknote className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground z-10" />
+                <Select
+                  value={formData.budget}
+                  onValueChange={(value) => setFormData({ ...formData, budget: value })}
+                >
+                  <SelectTrigger className="pl-10">
+                    <SelectValue placeholder="Select a budget type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="luxury">Luxury</SelectItem>
+                    <SelectItem value="moderate">Moderate</SelectItem>
+                    <SelectItem value="budget">Budget-friendly</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
             {/* Dates */}
             <div className="grid sm:grid-cols-2 gap-4">
               <div className="space-y-2">
@@ -132,27 +162,6 @@ export default function CreateTrip() {
                 </div>
               </div>
             </div>
-
-            {/* Cover Image */}
-            <div className="space-y-2">
-              <Label htmlFor="coverImage" className="text-foreground font-medium">
-                Cover Image URL (optional)
-              </Label>
-              <div className="relative">
-                <Image className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-                <Input
-                  id="coverImage"
-                  type="url"
-                  placeholder="https://example.com/image.jpg"
-                  value={formData.coverImage}
-                  onChange={(e) => setFormData({ ...formData, coverImage: e.target.value })}
-                  className="pl-10"
-                />
-              </div>
-              <p className="text-sm text-muted-foreground">
-                Add a beautiful cover photo for your trip
-              </p>
-            </div>
           </div>
 
           {/* Submit */}
@@ -165,10 +174,10 @@ export default function CreateTrip() {
             >
               Cancel
             </Button>
-            <Button 
-              type="submit" 
-              variant="ocean" 
-              size="lg" 
+            <Button
+              type="submit"
+              variant="ocean"
+              size="lg"
               className="flex-1 gap-2"
               disabled={isLoading}
             >
